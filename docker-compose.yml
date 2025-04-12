@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark-master
+    hostname: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      SPARK_MODE: master
+    volumes:
+      - spark-data:/data
+    networks:
+      - spark-net
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: "spark://spark-master:7077"
+      SPARK_WORKER_MEMORY: 4G
+      SPARK_WORKER_CORES: 2
+    ports:
+      - "8081:8081"
+    volumes:
+      - spark-data:/data
+    networks:
+      - spark-net
+
+  jupyter:
+    image: jupyter/all-spark-notebook:latest
+    container_name: spark-jupyter
+    depends_on:
+      - spark-master
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    environment:
+      JUPYTER_TOKEN: "admin"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - spark-data:/data
+    networks:
+      - spark-net
+    command: >
+      start-notebook.sh
+      --SparkContext.master=spark://spark-master:7077
+
+volumes:
+  spark-data:
+
+networks:
+  spark-net:
+    driver: bridge
