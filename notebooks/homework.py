@@ -7,14 +7,10 @@ from pyspark.sql.window import Window
 
 
 SRC_DIR = './work/in/'
-TRG_DIR = './work/out'
+TRG_DIR = './work/out/'
 SRC_CRIMES_FILENAME = 'crime.csv'
 SRC_OFF_CODES_FILENAME = 'offense_codes.csv'
 TRG_MART_FILENAME = 'crimes_stat_mart'
-
-
-def init_spark_session(app_name):
-    return session
 
 
 def build_crime_mart(src_dir, trg_dir):
@@ -99,5 +95,5 @@ def build_crime_mart(src_dir, trg_dir):
 
 if __name__ == "__main__":
     import sys
-    # build_crime_mart(src_dir=sys.argv[1], trg_dir=sys.argv[2])
-    build_crime_mart(src_dir=SRC_DIR, trg_dir=TRG_DIR)
+    build_crime_mart(src_dir=sys.argv[1], trg_dir=sys.argv[2])
+    # build_crime_mart(src_dir=SRC_DIR, trg_dir=TRG_DIR)
